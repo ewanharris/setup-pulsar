@@ -42,7 +42,8 @@ async function downloadPulsar(version, folder, token) {
 	switch (process.platform) {
 		case "win32": {
 			const downloadFile = await tc.downloadTool(await findUrl(version, token));
-			await tc.extractZip(downloadFile, folder);
+			fs.mkdirSync(folder);
+			fs.copyFileSync(downloadFile, folder);
 			break;
 		}
 		case "darwin": {
