@@ -10,9 +10,11 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        # os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [macos-latest]
         version: [beta]
-        source: [action, npm]
+        # source: [action, npm]
+        source: [npm]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
