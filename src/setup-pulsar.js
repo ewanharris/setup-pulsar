@@ -41,9 +41,8 @@ async function downloadPulsar(version, folder, token) {
 	}
 	switch (process.platform) {
 		case "win32": {
-			const downloadFile = await tc.downloadTool(await findUrl(version, token));
-			fs.mkdirSync(folder);
-			fs.copyFileSync(downloadFile, folder);
+			const filename = path.join(folder, "Pulsar.exe");
+			await tc.downloadTool(await findUrl(version, token), filename);
 			break;
 		}
 		case "darwin": {
@@ -97,7 +96,7 @@ async function addToPath(version, folder) {
 			// TODO: handle naming differences post GA
 			const display = ":99";
 			await exec(`/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- ${display} -ac -screen 0 1280x1024x16 +extension RANDR`);
-			const pulsarPath = path.join(folder, "usr", "share", "Pulsar");
+			const pulsarPath = path.join(folder, "usr", "share", "pulsar");
 			const ppmPath = path.join(pulsarPath, "resources", "app", "ppm", "bin");
 			if (process.env.GITHUB_ACTIONS) {
 				await core.exportVariable("DISPLAY", display);
