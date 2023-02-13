@@ -1,6 +1,6 @@
-[![GitHub Actions Status](https://github.com/ewanharris/setup-pulsar/workflows/Tests/badge.svg?branch=master)](https://github.com/ewanharris/setup-pulsar/actions)
-[![Travis-CI Status](https://travis-ci.com/ewanharris/setup-pulsar.svg?branch=master)](https://travis-ci.com/ewanharris/setup-pulsar)
-[![AppVeyor Status](https://ci.appveyor.com/api/projects/status/b1jl4lp0ud99byfc/branch/master?svg=true)](https://ci.appveyor.com/project/ewanharris/setup-pulsar/branch/master)
+[![GitHub Actions Status](https://github.com/ewanharris/setup-pulsar/workflows/Tests/badge.svg?branch=main)](https://github.com/ewanharris/setup-pulsar/actions)
+[![Travis-CI Status](https://travis-ci.com/ewanharris/setup-pulsar.svg?branch=main)](https://travis-ci.com/ewanharris/setup-pulsar)
+[![AppVeyor Status](https://ci.appveyor.com/api/projects/status/b1jl4lp0ud99byfc/branch/main?svg=true)](https://ci.appveyor.com/project/ewanharris/setup-pulsar/branch/main)
 
 # Setup Atom and APM
 
