@@ -10,10 +10,10 @@ if (!process.env.GITHUB_ACTIONS) {
 }
 const core = require("@actions/core");
 const {
-	downloadAtom,
+	downloadPulsar,
 	addToPath,
 	printVersions,
-} = require("./setup-atom.js");
+} = require("./setup-pulsar.js");
 
 async function run() {
 	try {
@@ -23,11 +23,11 @@ async function run() {
 		}
 		const version = channel || (process.env.GITHUB_ACTIONS && core.getInput("version").toLowerCase()) || process.argv[2] || "stable";
 		const token = (process.env.GITHUB_ACTIONS && core.getInput("token")) || process.argv[3] || "";
-		const folder = path.resolve(process.env.RUNNER_TEMP, process.argv[4] || "./atom");
+		const folder = path.resolve(process.env.RUNNER_TEMP, process.argv[4] || "./pulsar");
 		core.info(`version: ${version}`);
 		core.info(`folder: ${folder}`);
 
-		await downloadAtom(version, folder, token);
+		await downloadPulsar(version, folder, token);
 		await addToPath(version, folder);
 		await printVersions();
 
