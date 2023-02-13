@@ -79,10 +79,7 @@ async function addToPath(version, folder) {
 			// TODO: handle naming differences post GA
 			const pulsarPath = path.join(folder, "Pulsar.app", "Contents", "Resources", "app");
 			const ppmPath = path.join(pulsarPath, "ppm", "bin");
-			console.log(pulsarPath, fs.existsSync(pulsarPath));
-			console.log(ppmPath, fs.existsSync(ppmPath));
-			console.log(fs.readdirSync(folder));
-			console.log(fs.readdirSync(pulsarPath));
+			await exec("ln", ["-s", path.join(pulsarPath, "..", "pulsar.sh"), path.join(pulsarPath, "pulsar")]);
 			if (process.env.GITHUB_ACTIONS) {
 				core.addPath(pulsarPath);
 				core.addPath(ppmPath);
@@ -122,7 +119,7 @@ async function addToPath(version, folder) {
 async function printVersions() {
 	try {
 		core.info((await execAsync("pulsar -v")).stdout);
-		core.info((await execAsync("ppm -v")).stdout);
+		core.info((await execAsync("apm -v")).stdout); // apm is still apm, but can also be ran through pulsar -p
 	} catch(e) {
 		core.info("Error printing versions:", e);
 	}
