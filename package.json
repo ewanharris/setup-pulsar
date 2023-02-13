@@ -1,6 +1,6 @@
 {
   "name": "setup-pulsar",
-  "version": "3.0.7",
+  "version": "1.0.0",
   "description": "Setup Pulsar and PPM",
   "main": "./src/setup-pulsar.js",
   "scripts": {
