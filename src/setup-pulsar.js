@@ -62,6 +62,7 @@ async function addToPath(version, folder) {
 	switch (process.platform) {
 		case "win32": {
 			// TODO: handle naming differences post GA
+			console.log(fs.readdirSync(folder));
 			const pulsarPath = path.join(folder, "Pulsar", "resources", "cli");
 			if (process.env.GITHUB_ACTIONS) {
 				core.addPath(pulsarPath);
