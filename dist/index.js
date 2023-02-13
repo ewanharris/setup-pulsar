@@ -13060,7 +13060,7 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 4094:
+/***/ 3824:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const path = __nccwpck_require__(1017);
@@ -13082,23 +13082,24 @@ const cp = __nccwpck_require__(2081);
 const execAsync = promisify(cp.exec);
 const fs = __nccwpck_require__(7147);
 const writeFileAsync = promisify(fs.writeFile);
+const os = __nccwpck_require__(2037);
 
 const CHANNELS = [
-	"stable",
 	"beta",
 ];
 
 const INVALID_CHANNELS = [
 	"nightly",
 	"dev",
+	"stable",
 ];
 
-async function downloadAtom(version, folder, token) {
+async function downloadPulsar(version, folder, token) {
 	if (typeof version !== "string") {
 		version = "stable";
 	}
 	if (typeof folder !== "string") {
-		folder = path.resolve(process.env.RUNNER_TEMP, "./atom");
+		folder = path.resolve(process.env.RUNNER_TEMP, "./pulsar-edit");
 	}
 	if (typeof token !== "string") {
 		token = "";
@@ -13125,18 +13126,13 @@ async function downloadAtom(version, folder, token) {
 async function addToPath(version, folder) {
 	switch (process.platform) {
 		case "win32": {
-			let atomfolder = "Atom";
-			if (CHANNELS.includes(version) && version !== "stable") {
-				atomfolder += ` ${version[0].toUpperCase() + version.substring(1)}`;
-			} else if (version.includes("-beta")) {
-				atomfolder += " Beta";
-			}
-			const atomPath = path.join(folder, atomfolder, "resources", "cli");
+			// TODO: handle naming differences post GA
+			const pulsarPath = path.join(folder, "Pulsar", "resources", "cli");
 			if (process.env.GITHUB_ACTIONS) {
-				core.addPath(atomPath);
+				core.addPath(pulsarPath);
 			} else {
 				await exec("powershell", ["-Command", [
-					`[Environment]::SetEnvironmentVariable("PATH", "${atomPath};" + $env:PATH, "Machine")`,
+					`[Environment]::SetEnvironmentVariable("PATH", "${pulsarPath};" + $env:PATH, "Machine")`,
 					"Start-Sleep -s 10",
 					"Restart-Computer",
 					"Start-Sleep -s 10",
@@ -13145,50 +13141,38 @@ async function addToPath(version, folder) {
 			break;
 		}
 		case "darwin": {
-			let atomfolder = "Atom";
-			if (CHANNELS.includes(version) && version !== "stable") {
-				atomfolder += ` ${version[0].toUpperCase() + version.substring(1)}`;
-			} else if (version.includes("-beta")) {
-				atomfolder += " Beta";
-			}
-			atomfolder += ".app";
-			const atomPath = path.join(folder, atomfolder, "Contents", "Resources", "app");
-			await exec("ln", ["-s", path.join(atomPath, "atom.sh"), path.join(atomPath, "atom")]);
-			const apmPath = path.join(atomPath, "apm", "bin");
+			// TODO: handle naming differences post GA
+			const pulsarPath = path.join(folder, "Pulsar.app", "Contents", "Resources", "app");
+			const ppmPath = path.join(pulsarPath, "ppm", "bin");
 			if (process.env.GITHUB_ACTIONS) {
-				core.addPath(atomPath);
-				core.addPath(apmPath);
+				core.addPath(pulsarPath);
+				core.addPath(ppmPath);
 			} else {
-				await execAsync(`export "PATH=${atomPath}:${apmPath}:$PATH"`);
+				await execAsync(`export "PATH=${pulsarPath}:${ppmPath}:$PATH"`);
 				await writeFileAsync("../env.sh", [
 					"#! /bin/bash",
-					`export "PATH=${atomPath}:${apmPath}:$PATH"`,
+					`export "PATH=${pulsarPath}:${ppmPath}:$PATH"`,
 				].join("\n"), {mode: "777"});
 			}
 			break;
 		}
 		default: {
+			// TODO: handle naming differences post GA
 			const display = ":99";
 			await exec(`/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- ${display} -ac -screen 0 1280x1024x16 +extension RANDR`);
-			let atomfolder = "atom";
-			if (CHANNELS.includes(version) && version !== "stable") {
-				atomfolder += `-${version}`;
-			} else if (version.includes("-beta")) {
-				atomfolder += "-beta";
-			}
-			const atomPath = path.join(folder, "usr", "share", atomfolder);
-			const apmPath = path.join(atomPath, "resources", "app", "apm", "bin");
+			const pulsarPath = path.join(folder, "usr", "share", "Pulsar");
+			const ppmPath = path.join(pulsarPath, "resources", "app", "ppm", "bin");
 			if (process.env.GITHUB_ACTIONS) {
 				await core.exportVariable("DISPLAY", display);
-				core.addPath(atomPath);
-				core.addPath(apmPath);
+				core.addPath(pulsarPath);
+				core.addPath(ppmPath);
 			} else {
 				await execAsync(`export DISPLAY="${display}"`);
-				await execAsync(`export "PATH=${atomPath}:${apmPath}:$PATH"`);
+				await execAsync(`export "PATH=${pulsarPath}:${ppmPath}:$PATH"`);
 				await writeFileAsync("../env.sh", [
 					"#! /bin/bash",
 					`export DISPLAY="${display}"`,
-					`export "PATH=${atomPath}:${apmPath}:$PATH"`,
+					`export "PATH=${pulsarPath}:${ppmPath}:$PATH"`,
 				].join("\n"), {mode: "777"});
 			}
 			break;
@@ -13198,53 +13182,57 @@ async function addToPath(version, folder) {
 
 async function printVersions() {
 	try {
-		core.info((await execAsync("atom -v")).stdout);
-		core.info((await execAsync("apm -v")).stdout);
+		core.info((await execAsync("pulsar -v")).stdout);
+		core.info((await execAsync("ppm -v")).stdout);
 	} catch(e) {
 		core.info("Error printing versions:", e);
 	}
 }
 
 async function findUrl(version, token) {
+	let tag = version;
 	if (INVALID_CHANNELS.includes(version)) {
 		throw new Error(`'${version}' is not a valid version.`);
 	}
 	if (CHANNELS.includes(version)) {
 		const octokit = new Octokit({auth: token});
 		const {data: releases} = await octokit.rest.repos.listReleases({
-			owner: "atom",
-			repo: "atom",
+			owner: "pulsar-edit",
+			repo: "pulsar",
 			per_page: 100,
 		});
 		let release;
-		if (version === "stable") {
+		if (version === "stable") { // leaving stable as it will be a thing
 			release = releases.find(r => !r.draft && !r.prerelease);
 		} else {
 			release = releases.find(r => !r.draft && r.prerelease && r.tag_name.includes(version));
 		}
 		if (release) {
-			version = release.tag_name;
+			tag = release.tag_name;
+			version = release.tag_name.replace("v", "");
 		}
 	}
 
 	switch (process.platform) {
 		case "win32": {
-			// atom-windows.zip
-			return `https://github.com/atom/atom/releases/download/${version}/atom-windows.zip`;
+			// Windows.Pulsar.1.101.0-beta.exe
+			return `https://github.com/pulsar-edit/pulsar/releases/download/${tag}/Windows.Pulsar.${version}.exe`;
 		}
 		case "darwin": {
-			// atom-mac.zip
-			return `https://github.com/atom/atom/releases/download/${version}/atom-mac.zip`;
+			// Silicon.Mac.Pulsar-1.101.0-beta-arm64-mac.zip or Intel.Mac.Pulsar-1.101.0-beta-mac.zip
+			const filename = os.arch() === "arm64" ? `Silicon.Mac.Pulsar-${version}-arm64-mac` : `Intel.Mac.Pulsar-${version}-mac`;
+			return `https://github.com/pulsar-edit/pulsar/releases/download/${tag}/${filename}.zip`;
 		}
 		default: {
-			// atom-amd64.deb
-			return `https://github.com/atom/atom/releases/download/${version}/atom-amd64.deb`;
+			// ARM.Linux.pulsar_1.101.0-beta_arm64.deb or Linux.pulsar_1.101.0-beta_amd64.deb
+			const filename = os.arch() === "arm64" ? `ARM.Linux.pulsar_${version}_arm64` : `Linux.pulsar_${version}_amd64`;
+			return `https://github.com/pulsar-edit/pulsar/releases/download/${tag}/${filename}.deb`;
 		}
 	}
 }
 
 module.exports = {
-	downloadAtom,
+	downloadPulsar,
 	addToPath,
 	printVersions,
 	findUrl,
@@ -13466,10 +13454,10 @@ if (!process.env.GITHUB_ACTIONS) {
 }
 const core = __nccwpck_require__(2186);
 const {
-	downloadAtom,
+	downloadPulsar,
 	addToPath,
 	printVersions,
-} = __nccwpck_require__(4094);
+} = __nccwpck_require__(3824);
 
 async function run() {
 	try {
@@ -13479,11 +13467,11 @@ async function run() {
 		}
 		const version = channel || (process.env.GITHUB_ACTIONS && core.getInput("version").toLowerCase()) || process.argv[2] || "stable";
 		const token = (process.env.GITHUB_ACTIONS && core.getInput("token")) || process.argv[3] || "";
-		const folder = path.resolve(process.env.RUNNER_TEMP, process.argv[4] || "./atom");
+		const folder = path.resolve(process.env.RUNNER_TEMP, process.argv[4] || "./pulsar");
 		core.info(`version: ${version}`);
 		core.info(`folder: ${folder}`);
 
-		await downloadAtom(version, folder, token);
+		await downloadPulsar(version, folder, token);
 		await addToPath(version, folder);
 		await printVersions();
 
