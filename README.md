@@ -1,6 +1,6 @@
-[![GitHub Actions Status](https://github.com/UziTech/action-setup-atom/workflows/Tests/badge.svg?branch=master)](https://github.com/UziTech/action-setup-atom/actions)
-[![Travis-CI Status](https://travis-ci.com/UziTech/action-setup-atom.svg?branch=master)](https://travis-ci.com/UziTech/action-setup-atom)
-[![AppVeyor Status](https://ci.appveyor.com/api/projects/status/b1jl4lp0ud99byfc/branch/master?svg=true)](https://ci.appveyor.com/project/UziTech/action-setup-atom/branch/master)
+[![GitHub Actions Status](https://github.com/ewanharris/setup-pulsar/workflows/Tests/badge.svg?branch=master)](https://github.com/ewanharris/setup-pulsar/actions)
+[![Travis-CI Status](https://travis-ci.com/ewanharris/setup-pulsar.svg?branch=master)](https://travis-ci.com/ewanharris/setup-pulsar)
+[![AppVeyor Status](https://ci.appveyor.com/api/projects/status/b1jl4lp0ud99byfc/branch/master?svg=true)](https://ci.appveyor.com/project/ewanharris/setup-pulsar/branch/master)
 
 # Setup Atom and APM
 
@@ -27,7 +27,7 @@ The token is used to search Atom releases to find the latest `stable` and `beta`
 ### Example usage
 
 ```yml
-uses: UziTech/action-setup-atom@v3
+uses: ewanharris/setup-pulsar@v3
 with:
   version: 'beta'
 ```
@@ -46,7 +46,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
-    - uses: UziTech/action-setup-atom@v3
+    - uses: ewanharris/setup-pulsar@v3
       with:
         version: ${{ matrix.version }}
     - name: Atom version

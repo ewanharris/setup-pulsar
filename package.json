@@ -1,8 +1,8 @@
 {
-  "name": "setup-atom",
+  "name": "setup-pulsar",
   "version": "3.0.7",
-  "description": "Setup Atom and APM",
-  "main": "./src/setup-atom.js",
+  "description": "Setup Pulsar and PPM",
+  "main": "./src/setup-pulsar.js",
   "scripts": {
     "test": "npm run lint",
     "lint": "eslint .",
@@ -15,22 +15,22 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/UziTech/action-setup-atom.git"
+    "url": "git+https://github.com/ewanharris/setup-pulsar.git"
   },
   "keywords": [
     "GitHub",
     "Actions",
     "action",
     "setup",
-    "atom",
-    "apm"
+    "pulsar",
+    "ppm"
   ],
   "author": "Tony Brix <tony@brix.ninja>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/UziTech/action-setup-atom/issues"
+    "url": "https://github.com/ewanharris/setup-pulsar/issues"
   },
-  "homepage": "https://github.com/UziTech/action-setup-atom#readme",
+  "homepage": "https://github.com/ewanharris/setup-pulsar#readme",
   "dependencies": {
     "@actions/core": "^1.9.1",
     "@actions/exec": "^1.1.1",

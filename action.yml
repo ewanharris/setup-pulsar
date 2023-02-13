@@ -1,5 +1,5 @@
-name: 'Setup Atom'
-description: 'Setup Atom and APM'
+name: 'Setup Pulsar'
+description: 'Setup Pulsar and PPM'
 inputs:
   version:
     description: 'Version, defaults to "stable"'
