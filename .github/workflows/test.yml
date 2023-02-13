@@ -35,7 +35,7 @@ jobs:
       - name: Don't download to repo directory
         run: git add . -N && git diff --name-only --exit-code -- . ':!dist'
       - name: Run Specs
-        run: pulsar --test spec/${{ matrix.version }}
+        run: apm --test spec/${{ matrix.version }}
 
   Lint:
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
