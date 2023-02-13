@@ -42,6 +42,7 @@ async function downloadAtom(version, folder, token) {
 		case "win32": {
 			const downloadFile = await tc.downloadTool(await findUrl(version, token));
 			await tc.extractZip(downloadFile, folder);
+			console.log(fs.readdirSync(folder));
 			break;
 		}
 		case "darwin": {
@@ -52,6 +53,7 @@ async function downloadAtom(version, folder, token) {
 		default: {
 			const downloadFile = await tc.downloadTool(await findUrl(version, token));
 			await exec("dpkg-deb", ["-x", downloadFile, folder]);
+			console.log(fs.readdirSync(folder));
 			break;
 		}
 	}
@@ -67,6 +69,7 @@ async function addToPath(version, folder) {
 				atomfolder += " Beta";
 			}
 			const atomPath = path.join(folder, atomfolder, "resources", "cli");
+			console.log(atomPath);
 			if (process.env.GITHUB_ACTIONS) {
 				core.addPath(atomPath);
 			} else {
@@ -113,6 +116,10 @@ async function addToPath(version, folder) {
 			}
 			const atomPath = path.join(folder, "usr", "share", atomfolder);
 			const apmPath = path.join(atomPath, "resources", "app", "apm", "bin");
+			console.log(atomPath);
+			console.log(fs.existsSync(atomPath));
+			console.log(fs.readdirSync(atomPath));
+			console.log(apmPath);
 			if (process.env.GITHUB_ACTIONS) {
 				await core.exportVariable("DISPLAY", display);
 				core.addPath(atomPath);
