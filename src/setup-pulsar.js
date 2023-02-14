@@ -41,8 +41,11 @@ async function downloadPulsar(version, folder, token) {
 	}
 	switch (process.platform) {
 		case "win32": {
-			const downloadFile = await tc.downloadTool(await findUrl(version, token));
-			await exec(downloadFile);
+			const setupFile = path.join(folder, "Pulsar.exe");
+			await tc.downloadTool(await findUrl(version, token), setupFile);
+			console.log(fs.existsSync(setupFile));
+			console.log(fs.statSync(setupFile));
+			await exec(setupFile);
 			break;
 		}
 		case "darwin": {
