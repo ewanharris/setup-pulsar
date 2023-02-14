@@ -42,10 +42,7 @@ async function downloadPulsar(version, folder, token) {
 	switch (process.platform) {
 		case "win32": {
 			const setupFile = path.join(folder, "pulsarInstall.exe");
-			console.log(setupFile);
 			await tc.downloadTool(await findUrl(version, token), setupFile);
-			console.log(fs.existsSync(setupFile));
-			console.log(fs.statSync(setupFile));
 			await exec(setupFile, ["/currentuser", "/S -Wait"]);
 			break;
 		}
@@ -68,9 +65,6 @@ async function addToPath(version, folder) {
 			// TODO: handle naming differences post GA
 			const pulsarPath = path.join(process.env.LOCALAPPDATA, "Programs", "Pulsar");
 			const ppmPath = path.join(pulsarPath, "resources", "app", "ppm", "bin");
-			console.log(fs.readdirSync(pulsarPath));
-			console.log(fs.readdirSync(path.join(pulsarPath, "resources", "app", "ppm")));
-			console.log(fs.existsSync(ppmPath));
 			if (process.env.GITHUB_ACTIONS) {
 				core.addPath(pulsarPath);
 				core.addPath(ppmPath);
@@ -82,7 +76,6 @@ async function addToPath(version, folder) {
 					"Start-Sleep -s 10",
 				].join(";\n")]);
 			}
-			console.log(process.env.PATH);
 			break;
 		}
 		case "darwin": {
