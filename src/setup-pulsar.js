@@ -41,8 +41,8 @@ async function downloadPulsar(version, folder, token) {
 	}
 	switch (process.platform) {
 		case "win32": {
-			const filename = path.join(folder, "Pulsar.exe");
-			await tc.downloadTool(await findUrl(version, token), filename);
+			const downloadFile = await tc.downloadTool(await findUrl(version, token));
+			await exec(downloadFile);
 			break;
 		}
 		case "darwin": {
@@ -62,8 +62,7 @@ async function addToPath(version, folder) {
 	switch (process.platform) {
 		case "win32": {
 			// TODO: handle naming differences post GA
-			console.log(fs.readdirSync(folder));
-			const pulsarPath = path.join(folder, "Pulsar", "resources", "cli");
+			const pulsarPath = path.join(process.env.LOCALAPPDATA, "Programs", "Pulsar");
 			if (process.env.GITHUB_ACTIONS) {
 				core.addPath(pulsarPath);
 			} else {
@@ -74,6 +73,7 @@ async function addToPath(version, folder) {
 					"Start-Sleep -s 10",
 				].join(";\n")]);
 			}
+			console.log(process.env.PATH);
 			break;
 		}
 		case "darwin": {
@@ -153,8 +153,8 @@ async function findUrl(version, token) {
 
 	switch (process.platform) {
 		case "win32": {
-			// Windows.Pulsar.1.101.0-beta.exe
-			return `https://github.com/pulsar-edit/pulsar/releases/download/${tag}/Windows.Pulsar.${version}.exe`;
+			// Windows.Pulsar.Setup.1.101.0-beta.exe
+			return `https://github.com/pulsar-edit/pulsar/releases/download/${tag}/Windows.Pulsar.Setup.${version}.exe`;
 		}
 		case "darwin": {
 			// Silicon.Mac.Pulsar-1.101.0-beta-arm64-mac.zip or Intel.Mac.Pulsar-1.101.0-beta-mac.zip
