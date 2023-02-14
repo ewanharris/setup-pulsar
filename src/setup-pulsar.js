@@ -1,13 +1,4 @@
 const path = require("path");
-if (!process.env.GITHUB_ACTIONS) {
-	if (process.env.USERPROFILE) {
-		process.env.RUNNER_TEMP = path.resolve(process.env.USERPROFILE, "./temp");
-	} else if (process.env.HOME) {
-		process.env.RUNNER_TEMP = path.resolve(process.env.HOME, "./temp");
-	} else {
-		process.env.RUNNER_TEMP = path.resolve("../temp");
-	}
-}
 const tc = require("@actions/tool-cache");
 const core = require("@actions/core");
 const {exec} = require("@actions/exec");
@@ -15,8 +6,6 @@ const { Octokit } = require("@octokit/rest");
 const {promisify} = require("util");
 const cp = require("child_process");
 const execAsync = promisify(cp.exec);
-const fs = require("fs");
-const writeFileAsync = promisify(fs.writeFile);
 const os = require("os");
 
 const CHANNELS = [
@@ -65,17 +54,8 @@ async function addToPath(version, folder) {
 			// TODO: handle naming differences post GA
 			const pulsarPath = path.join(process.env.LOCALAPPDATA, "Programs", "Pulsar");
 			const ppmPath = path.join(pulsarPath, "resources", "app", "ppm", "bin");
-			if (process.env.GITHUB_ACTIONS) {
-				core.addPath(pulsarPath);
-				core.addPath(ppmPath);
-			} else {
-				await exec("powershell", ["-Command", [
-					`[Environment]::SetEnvironmentVariable("PATH", "${pulsarPath};" + $env:PATH, "Machine")`,
-					"Start-Sleep -s 10",
-					"Restart-Computer",
-					"Start-Sleep -s 10",
-				].join(";\n")]);
-			}
+			core.addPath(pulsarPath);
+			core.addPath(ppmPath);
 			break;
 		}
 		case "darwin": {
@@ -83,16 +63,8 @@ async function addToPath(version, folder) {
 			const pulsarPath = path.join(folder, "Pulsar.app", "Contents", "Resources", "app");
 			const ppmPath = path.join(pulsarPath, "ppm", "bin");
 			await exec("ln", ["-s", path.join(pulsarPath, "..", "pulsar.sh"), path.join(pulsarPath, "pulsar")]);
-			if (process.env.GITHUB_ACTIONS) {
-				core.addPath(pulsarPath);
-				core.addPath(ppmPath);
-			} else {
-				await execAsync(`export "PATH=${pulsarPath}:${ppmPath}:$PATH"`);
-				await writeFileAsync("../env.sh", [
-					"#! /bin/bash",
-					`export "PATH=${pulsarPath}:${ppmPath}:$PATH"`,
-				].join("\n"), {mode: "777"});
-			}
+			core.addPath(pulsarPath);
+			core.addPath(ppmPath);
 			break;
 		}
 		default: {
@@ -101,19 +73,9 @@ async function addToPath(version, folder) {
 			await exec(`/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- ${display} -ac -screen 0 1280x1024x16 +extension RANDR`);
 			const pulsarPath = path.join(folder, "opt", "Pulsar");
 			const ppmPath = path.join(pulsarPath, "resources", "app", "ppm", "bin");
-			if (process.env.GITHUB_ACTIONS) {
-				await core.exportVariable("DISPLAY", display);
-				core.addPath(pulsarPath);
-				core.addPath(ppmPath);
-			} else {
-				await execAsync(`export DISPLAY="${display}"`);
-				await execAsync(`export "PATH=${pulsarPath}:${ppmPath}:$PATH"`);
-				await writeFileAsync("../env.sh", [
-					"#! /bin/bash",
-					`export DISPLAY="${display}"`,
-					`export "PATH=${pulsarPath}:${ppmPath}:$PATH"`,
-				].join("\n"), {mode: "777"});
-			}
+			await core.exportVariable("DISPLAY", display);
+			core.addPath(pulsarPath);
+			core.addPath(ppmPath);
 			break;
 		}
 	}
