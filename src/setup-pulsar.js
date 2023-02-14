@@ -67,9 +67,13 @@ async function addToPath(version, folder) {
 		case "win32": {
 			// TODO: handle naming differences post GA
 			const pulsarPath = path.join(process.env.LOCALAPPDATA, "Programs", "Pulsar");
+			const ppmPath = path.join(pulsarPath, "resources", "app", "ppm", "bin");
 			console.log(fs.readdirSync(pulsarPath));
+			console.log(fs.readdirSync(path.join(pulsarPath, "resources", "app", "ppm")));
+			console.log(fs.existsSync(ppmPath));
 			if (process.env.GITHUB_ACTIONS) {
 				core.addPath(pulsarPath);
+				core.addPath(ppmPath);
 			} else {
 				await exec("powershell", ["-Command", [
 					`[Environment]::SetEnvironmentVariable("PATH", "${pulsarPath};" + $env:PATH, "Machine")`,
