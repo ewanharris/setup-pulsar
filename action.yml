@@ -2,11 +2,11 @@ name: 'Setup Pulsar'
 description: 'Setup Pulsar and PPM'
 inputs:
   version:
-    description: 'Version, defaults to "stable"'
+    description: 'Version, defaults to "beta"'
     required: false
-    default: 'stable'
+    default: 'beta'
   token:
-    description: 'GitHub token with read permission for finding stable and beta versions, defaults to secrets.GITHUB_TOKEN'
+    description: 'GitHub token with read permission for finding versions, defaults to secrets.GITHUB_TOKEN'
     required: false
     default: ${{ github.token }}
 runs:

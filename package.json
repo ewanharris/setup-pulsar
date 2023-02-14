@@ -1,6 +1,7 @@
 {
   "name": "setup-pulsar",
   "version": "1.0.0",
+  "private": true,
   "description": "Setup Pulsar and PPM",
   "main": "./src/setup-pulsar.js",
   "scripts": {
@@ -9,23 +10,11 @@
     "build": "ncc build src/action.js --license license.txt",
     "prepare": "husky install"
   },
-  "bin": "./src/bin.js",
-  "files": [
-    "src/"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ewanharris/setup-pulsar.git"
   },
-  "keywords": [
-    "GitHub",
-    "Actions",
-    "action",
-    "setup",
-    "pulsar",
-    "ppm"
-  ],
-  "author": "Tony Brix <tony@brix.ninja>",
+  "author": "Ewan Harris <ewanharris93@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ewanharris/setup-pulsar/issues"
@@ -44,7 +33,6 @@
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^8.0.7",
-    "@semantic-release/npm": "^9.0.2",
     "@semantic-release/release-notes-generator": "^10.0.3",
     "@vercel/ncc": "^0.36.1",
     "eslint": "^8.34.0",
