@@ -17,11 +17,7 @@ const {
 
 async function run() {
 	try {
-		const channel = (process.env.GITHUB_ACTIONS && core.getInput("channel").toLowerCase());
-		if (channel) {
-			core.error("'channel' is deprecated. Please use 'version' instead.");
-		}
-		const version = channel || (process.env.GITHUB_ACTIONS && core.getInput("version").toLowerCase()) || process.argv[2] || "stable";
+		const version = (process.env.GITHUB_ACTIONS && core.getInput("version").toLowerCase()) || process.argv[2] || "stable";
 		const token = (process.env.GITHUB_ACTIONS && core.getInput("token")) || process.argv[3] || "";
 		const folder = path.resolve(process.env.RUNNER_TEMP, process.argv[4] || "./pulsar");
 		core.info(`version: ${version}`);

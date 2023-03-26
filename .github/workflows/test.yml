@@ -12,7 +12,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         version: [beta]
-        source: [action, npm]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -21,10 +20,8 @@ jobs:
       - name: Install Dependencies
         run: npm ci
       - name: Build Action
-        if: matrix.source == 'action'
         run: npm run build
-      - name: Install Pulsar ${{ matrix.version }} with Action
-        if: matrix.source == 'action'
+      - name: Install Pulsar ${{ matrix.version }}
         uses: ./
         with:
           version: ${{ matrix.version }}

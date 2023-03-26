@@ -30,19 +30,21 @@ async function downloadPulsar(version, folder, token) {
 	if (typeof token !== "string") {
 		token = "";
 	}
+	const url = await findUrl(version, token);
+	core.debug(`Downloading ${url}`);
 	switch (process.platform) {
 		case "win32": {
-			const downloadFile = await tc.downloadTool(await findUrl(version, token));
+			const downloadFile = await tc.downloadTool(url);
 			await tc.extractZip(downloadFile, folder);
 			break;
 		}
 		case "darwin": {
-			const downloadFile = await tc.downloadTool(await findUrl(version, token));
+			const downloadFile = await tc.downloadTool(url);
 			await tc.extractZip(downloadFile, folder);
 			break;
 		}
 		default: {
-			const downloadFile = await tc.downloadTool(await findUrl(version, token));
+			const downloadFile = await tc.downloadTool(url);
 			await exec("dpkg-deb", ["-x", downloadFile, folder]);
 			break;
 		}
