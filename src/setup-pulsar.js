@@ -56,32 +56,17 @@ async function addToPath(version, folder) {
 		case "win32": {
 			// TODO: handle naming differences post GA
 			const pulsarPath = path.join(folder, "Pulsar", "resources", "cli");
-			if (process.env.GITHUB_ACTIONS) {
-				core.addPath(pulsarPath);
-			} else {
-				await exec("powershell", ["-Command", [
-					`[Environment]::SetEnvironmentVariable("PATH", "${pulsarPath};" + $env:PATH, "Machine")`,
-					"Start-Sleep -s 10",
-					"Restart-Computer",
-					"Start-Sleep -s 10",
-				].join(";\n")]);
-			}
+			core.debug(`Adding ${pulsarPath} to the PATH`);
+			core.addPath(pulsarPath);
 			break;
 		}
 		case "darwin": {
 			// TODO: handle naming differences post GA
 			const pulsarPath = path.join(folder, "Pulsar.app", "Contents", "Resources", "app");
 			const ppmPath = path.join(pulsarPath, "ppm", "bin");
-			if (process.env.GITHUB_ACTIONS) {
-				core.addPath(pulsarPath);
-				core.addPath(ppmPath);
-			} else {
-				await execAsync(`export "PATH=${pulsarPath}:${ppmPath}:$PATH"`);
-				await writeFileAsync("../env.sh", [
-					"#! /bin/bash",
-					`export "PATH=${pulsarPath}:${ppmPath}:$PATH"`,
-				].join("\n"), {mode: "777"});
-			}
+			core.debug(`Adding ${pulsarPath} and ${ppmPath} to the PATH`);
+			core.addPath(pulsarPath);
+			core.addPath(ppmPath);
 			break;
 		}
 		default: {
@@ -90,19 +75,10 @@ async function addToPath(version, folder) {
 			await exec(`/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- ${display} -ac -screen 0 1280x1024x16 +extension RANDR`);
 			const pulsarPath = path.join(folder, "usr", "share", "Pulsar");
 			const ppmPath = path.join(pulsarPath, "resources", "app", "ppm", "bin");
-			if (process.env.GITHUB_ACTIONS) {
-				await core.exportVariable("DISPLAY", display);
-				core.addPath(pulsarPath);
-				core.addPath(ppmPath);
-			} else {
-				await execAsync(`export DISPLAY="${display}"`);
-				await execAsync(`export "PATH=${pulsarPath}:${ppmPath}:$PATH"`);
-				await writeFileAsync("../env.sh", [
-					"#! /bin/bash",
-					`export DISPLAY="${display}"`,
-					`export "PATH=${pulsarPath}:${ppmPath}:$PATH"`,
-				].join("\n"), {mode: "777"});
-			}
+			core.debug(`Adding ${pulsarPath} and ${ppmPath} to the PATH`);
+			await core.exportVariable("DISPLAY", display);
+			core.addPath(pulsarPath);
+			core.addPath(ppmPath);
 			break;
 		}
 	}
