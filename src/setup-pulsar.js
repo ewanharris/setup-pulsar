@@ -6,8 +6,6 @@ const { Octokit } = require("@octokit/rest");
 const {promisify} = require("util");
 const cp = require("child_process");
 const execAsync = promisify(cp.exec);
-const fs = require("fs");
-const writeFileAsync = promisify(fs.writeFile);
 const os = require("os");
 
 const CHANNELS = [
@@ -62,7 +60,7 @@ async function addToPath(version, folder) {
 		}
 		case "darwin": {
 			// TODO: handle naming differences post GA
-			const pulsarPath = path.join(folder, "Pulsar.app", "Contents", "Resources", "app");
+			const pulsarPath = path.join(folder, "Pulsar.app", "Contents", "Resources");
 			const ppmPath = path.join(pulsarPath, "ppm", "bin");
 			core.debug(`Adding ${pulsarPath} and ${ppmPath} to the PATH`);
 			core.addPath(pulsarPath);
