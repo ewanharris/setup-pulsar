@@ -1,13 +1,4 @@
 const path = require("path");
-if (!process.env.GITHUB_ACTIONS) {
-	if (process.env.USERPROFILE) {
-		process.env.RUNNER_TEMP = path.resolve(process.env.USERPROFILE, "./temp");
-	} else if (process.env.HOME) {
-		process.env.RUNNER_TEMP = path.resolve(process.env.HOME, "./temp");
-	} else {
-		process.env.RUNNER_TEMP = path.resolve("../temp");
-	}
-}
 const tc = require("@actions/tool-cache");
 const core = require("@actions/core");
 const {exec} = require("@actions/exec");
@@ -120,7 +111,9 @@ async function printVersions() {
 		core.info((await execAsync("pulsar -v")).stdout);
 		core.info((await execAsync("ppm -v")).stdout);
 	} catch(e) {
-		core.info("Error printing versions:", e);
+		core.warning("Error printing versions:", e);
+		core.warning(e.message);
+		core.warning(e.stack);
 	}
 }
 
